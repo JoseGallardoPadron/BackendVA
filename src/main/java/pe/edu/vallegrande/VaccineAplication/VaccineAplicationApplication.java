@@ -1,13 +1,13 @@
-package pe.du.vallegrande.Vaccine;
+package pe.edu.vallegrande.VaccineAplication;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class VaccineApplication {
+public class VaccineAplicationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(VaccineApplication.class, args);
+		SpringApplication.run(VaccineAplicationApplication.class, args);
 	}
 
 }

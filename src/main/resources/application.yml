@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: productor-microservicio
+    kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  r2dbc:
+    url: r2dbc:postgresql://ep-dry-feather-a50464ji.us-east-2.aws.neon.tech:5432/jose?options=endpoint%3Dep-dry-feather-a50464ji&sslmode=require
+    username: JG-ChatBot_owner
+    password: Qbr4YsUfdz6R
+
+

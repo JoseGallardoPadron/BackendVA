@@ -20,11 +20,11 @@ public class VaccineApplicationsController {
     @Autowired
     private VaccineApplicationsServices vaccineApplicationsServices; // Inyecta el servicio
 
-    @PostMapping("/create")
-public Mono<ResponseEntity<VaccineApplicationsModel>> createApplication(@RequestBody VaccineApplicationsModel application) {
-    return vaccineApplicationsServices.createApplication(application);
-}
 
+    @PostMapping("/create")
+    public Mono<ResponseEntity<VaccineApplicationsModel>> createApplication(@RequestBody VaccineApplicationsModel application) {
+        return vaccineApplicationsServices.createApplication(application);
+    }
 
     // Listar todas las aplicaciones de vacunas
     @GetMapping
@@ -49,20 +49,21 @@ public Mono<ResponseEntity<VaccineApplicationsModel>> createApplication(@Request
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-      // Eliminar (inactivar) una vacuna
-@DeleteMapping("/{id}")
-public Mono<ResponseEntity<VaccineApplicationsModel>> deactivateApplication(@PathVariable Long id) {
-    return vaccineApplicationsServices.deactivateApplication(id) // Llamada al servicio que cambia el estado
-            .map(deactivateApplication -> ResponseEntity.ok(deactivateApplication)) // Retorna la vacuna con estado "I"
-            .defaultIfEmpty(ResponseEntity.notFound().build()); // Si no se encuentra la vacuna, retorna Not Found
-}
+    // Eliminar (inactivar) una vacuna
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<VaccineApplicationsModel>> deactivateApplication(@PathVariable Long id) {
+        return vaccineApplicationsServices.deactivateApplication(id) // Llamada al servicio que cambia el estado
+                .map(deactivateApplication -> ResponseEntity.ok(deactivateApplication)) // Retorna la vacuna con estado "I"
+                .defaultIfEmpty(ResponseEntity.notFound().build()); // Si no se encuentra la vacuna, retorna Not Found
+    }
 
-  // Activar (revertir a activo) una vacuna
-  @PatchMapping("/activate/{id}") // Método PATCH para actualizar parcialmente
-public Mono<ResponseEntity<VaccineApplicationsModel>> activateApplication(@PathVariable Long id) {
-       return vaccineApplicationsServices.activateApplication(id) // Llamada al servicio que cambia el estado
-               .map(activateApplication -> ResponseEntity.ok(activateApplication)) // Retorna la vacuna con estado "A"
-               .defaultIfEmpty(ResponseEntity.notFound().build()); // Si no se encuentra la vacuna, retorna Not Found
-}
+    // Activar (revertir a activo) una vacuna
+    @PatchMapping("/activate/{id}") // Método PATCH para actualizar parcialmente
+    public Mono<ResponseEntity<VaccineApplicationsModel>> activateApplication(@PathVariable Long id) {
+        return vaccineApplicationsServices.activateApplication(id) // Llamada al servicio que cambia el estado
+                .map(activateApplication -> ResponseEntity.ok(activateApplication)) // Retorna la vacuna con estado "A"
+                .defaultIfEmpty(ResponseEntity.notFound().build()); // Si no se encuentra la vacuna, retorna Not Found
+    }
     
+
 }

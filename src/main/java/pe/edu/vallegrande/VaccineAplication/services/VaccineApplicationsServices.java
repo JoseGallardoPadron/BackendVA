@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import pe.edu.vallegrande.VaccineAplication.messaging.KafkaConsumerService;
 import pe.edu.vallegrande.VaccineAplication.model.VaccineApplicationsModel;
 import pe.edu.vallegrande.VaccineAplication.repository.VaccineApplicationsRepository;
 import reactor.core.publisher.Flux;
@@ -17,8 +16,8 @@ public class VaccineApplicationsServices {
     @Autowired
     private VaccineApplicationsRepository vaccineApplicationsRepository;
     
-    @Autowired
-    private KafkaConsumerService kafkaConsumerService;
+    
+    
 
     private final WebClient webClient;
 
@@ -53,7 +52,6 @@ public class VaccineApplicationsServices {
                     }
                     return vaccineApplicationsRepository.save(application)
                             .map(savedApplication -> {
-                                kafkaConsumerService.sendMessage("vaccine-topic", "Nueva aplicación creada: " + savedApplication.getApplicationId());
                                 return ResponseEntity.status(HttpStatus.CREATED).body(savedApplication);
                             });
                 });
@@ -61,27 +59,18 @@ public class VaccineApplicationsServices {
 
     // 🔹 Listar todas las aplicaciones de vacunas
     public Flux<VaccineApplicationsModel> getAllApplications() {
-        return vaccineApplicationsRepository.findAll()
-            .doOnNext(app -> kafkaConsumerService.sendMessage("vaccine-topic", "Listando aplicación: " + app.getApplicationId()));
+        return vaccineApplicationsRepository.findAll();
     }
 
     // 🔹 Obtener una aplicación de vacuna por ID
     public Mono<VaccineApplicationsModel> getApplicationById(Long id) {
-        return vaccineApplicationsRepository.findById(id)
-            .doOnSuccess(app -> {
-                if (app != null) {
-                    kafkaConsumerService.sendMessage("vaccine-topic", "Aplicación obtenida: " + app.getApplicationId());
-                }
-            });
+        return vaccineApplicationsRepository.findById(id);
     }
 
     // 🔹 Actualizar una aplicación de vacuna
     public Mono<VaccineApplicationsModel> updateApplication(Long id, VaccineApplicationsModel application) {
         application.setApplicationId(id);
-        return vaccineApplicationsRepository.save(application)
-            .doOnSuccess(updatedApp -> 
-                kafkaConsumerService.sendMessage("vaccine-topic", "Aplicación actualizada: " + updatedApp.getApplicationId())
-            );
+        return vaccineApplicationsRepository.save(application);
     }
 
     // 🔹 Eliminar (inactivar) una aplicación de vacuna
@@ -89,10 +78,7 @@ public class VaccineApplicationsServices {
         return vaccineApplicationsRepository.findById(id)
             .flatMap(existingApplication -> {
                 existingApplication.setActive("I");
-                return vaccineApplicationsRepository.save(existingApplication)
-                    .doOnSuccess(deactivatedApp -> 
-                        kafkaConsumerService.sendMessage("vaccine-topic", "Aplicación desactivada: " + deactivatedApp.getApplicationId())
-                    );
+                return vaccineApplicationsRepository.save(existingApplication);
             });
     }
 
@@ -101,10 +87,7 @@ public class VaccineApplicationsServices {
         return vaccineApplicationsRepository.findById(id)
             .flatMap(existingApplication -> {
                 existingApplication.setActive("A");
-                return vaccineApplicationsRepository.save(existingApplication)
-                    .doOnSuccess(activatedApp -> 
-                        kafkaConsumerService.sendMessage("vaccine-topic", "Aplicación activada: " + activatedApp.getApplicationId())
-                    );
+                return vaccineApplicationsRepository.save(existingApplication);
             });
     }
 }

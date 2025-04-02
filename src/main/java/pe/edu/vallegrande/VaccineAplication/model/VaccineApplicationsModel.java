@@ -45,4 +45,7 @@ public class VaccineApplicationsModel {
 
     @Column("active")
     private String active; // O usa `Boolean active;` si en la BD es tipo boolean
+
+    private String vaccineName; // Para almacenar el nombre de la vacuna
+    private String shedName;
 }
